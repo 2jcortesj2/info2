@@ -7,12 +7,12 @@ class Cosa:
     def informacion(self):
         print(
             (
-                f"Esta es uan clase con atributos publicos: {self.publico}"
-                f"un atributo protegido: {self._protegido}"
-                f"y un archivo privado: {self.__privado}"
+                f"Esta es una clase con atributos publicos: {self.publico}"
+                f"\nun atributo protegido: {self._protegido}"
+                f"\ny un archivo privado: {self.__privado}"
             )
         )
     
 a = Cosa()
 
-print(a.__privado)
+print(a.informacion())
