@@ -4,14 +4,14 @@ class Persona:
         self.__cedula = 0
         self.__genero = ""
     
-    def asignarNombre(self, nombre):
-        self.__nombre = nombre
+    def asignarNombre(self, rol):
+        self.__nombre = input('Ingrese nombre del ' + rol + ': ')
     
-    def asignarCedula(self, Cedula):
-        self.__cedula = Cedula
+    def asignarCedula(self, rol):
+        self.__cedula = input('Ingrese cedula del ' + rol + ': ')
 
-    def asignarGenero(self, Genero):
-        self.__genero = Genero
+    def asignarGenero(self, rol):
+        self.__genero = input('Ingrese genero del ' + rol + ': ')
     
     def verNombre(self):
         return self.__nombre
@@ -21,13 +21,17 @@ class Persona:
     
     def verGenero(self):
         return self.__genero
+    
+    def guardarInfo(self):
+        return self.__nombre, self.__cedula, self.__genero
 
-class Paciente:
+class Paciente(Persona):
     def __init__(self):
+        super().__init__()
         self.__servicio = ""
 
-    def asignarServicio(self, servicio):
-        self.__servicio = servicio
+    def asignarServicio(self):
+        self.__servicio = input('Ingresar servicio: ')
 
     def verServicio(self):
         return self.__servicio
@@ -35,8 +39,10 @@ class Paciente:
 class Empleado(Persona):
     def __init__(self):
         self.__turno = ""
+
     def asignarTurno(self, turno):
         self.__turno = turno
+        
     def verTurno(self, turno):
         return self.__turno
 
@@ -56,30 +62,31 @@ class Medico(Empleado):
     def verEspecialidad(self):
         return self.__especialidad
 
-class Sistema( Persona ):
+class Sistema(Persona):
     
     def _init_(self):
+        Persona.__init__(self)
         self.__lista_pacientes = []
         self.__lista_nombre = []
         self.__lista_cedula = []
         self.__lista_genero = []
         self.__diccionario_pacientes = {  }
 
-    def numeroDePacientes( self ):
-        self._numero_pacientes = len( self._lista_pacientes )
+    def numeroDePacientes(self):
+        self.__numero_pacientes = len( self.__lista_pacientes )
         return self.__numero_pacientes
     
-    def ingresarPaciente( self, rol ):
+    def ingresarPaciente(self, rol):
         p = Paciente() 
-        p.setName( rol )
-        p.setGenero( rol )
-        p.setCedula( rol )
-        p.assignService()
-        self.__lista_pacientes.append( p.guardarInfo() )
-        self.__lista_nombre.append( p.getName() )
-        self.__lista_cedula.append( p.getCedula() )
-        self.__lista_genero.append( p.getGenero() )
-        self._diccionario_pacientes.update( {'Nombre' : self.lista_nombre, 'Cedula' : self.lista_cedula, 'Genero' : self._lista_genero} )
+        p.asignarNombre(rol)
+        p.asignarGenero(rol)
+        p.asignarCedula(rol)
+        p.asignarServicio()
+        self.__lista_pacientes.append(self.guardarInfo())
+        self.__lista_nombre.append( p.verNombre() )
+        self.__lista_cedula.append( p.verCedula() )
+        self.__lista_genero.append( p.verGenero() )
+        self._diccionario_pacientes.update( {'Nombre' : self.__lista_nombre, 'Cedula' : self.__lista_cedula, 'Genero' : self.__lista_genero} )
 
         print( self.__lista_pacientes )
         print( self.numeroDePacientes() )
@@ -92,4 +99,29 @@ class Sistema( Persona ):
 
     def verDatosPacientesDiccionario( self ):
         cedula = input( "Ingresar la cedula del pacientes que busca en el diccionario: " )
-        for p, c in enumerate( self.__diccionario_pacientes ):
+        for p, c in enumerate( self.__diccionario_pacientes['Cedula'] ):
+            if cedula == c:
+                print( f"Nombre: {self._diccionario_pacientes['Nombre'][p]}, cedula : {self.diccionario_pacientes['Cedula'][p]}, Genero: {self._diccionario_pacientes['Genero'][p]}" )
+
+
+                
+def main():
+    a = Sistema()                
+    while True:
+        opcion = int(input('''
+        1. Ingresar paciente
+        2. Ver datos de paciente
+        3. Ver numero de pacientes
+        4. Salir
+        >> '''))
+        if opcion == 1:
+            a.ingresarPaciente('Paciente')
+        if opcion == 2:
+            a.verDatosPacientesDiccionario('Paciente')
+        if opcion == 3:
+            a.numeroDePacientes('Paciente')
+        if opcion == 4:
+            break
+
+if __name__ == '__main__':
+    main()

@@ -15,4 +15,12 @@ class Cosa:
     
 a = Cosa()
 
-print(a.informacion())
+A = {1:'hola', 2:'como', 3:'te'}
+B = { 1:'llamas', 5:'tu', 6:'nombre'}
+
+A.update(B)
+print(A)
+
+#for p, c in enumerate(A):
+ #   print(p)
+  #  print('\n',c)
