@@ -55,3 +55,41 @@ class Medico(Empleado):
         self.__especialidad = especialidad
     def verEspecialidad(self):
         return self.__especialidad
+
+class Sistema( Persona ):
+    
+    def _init_(self):
+        self.__lista_pacientes = []
+        self.__lista_nombre = []
+        self.__lista_cedula = []
+        self.__lista_genero = []
+        self.__diccionario_pacientes = {  }
+
+    def numeroDePacientes( self ):
+        self._numero_pacientes = len( self._lista_pacientes )
+        return self.__numero_pacientes
+    
+    def ingresarPaciente( self, rol ):
+        p = Paciente() 
+        p.setName( rol )
+        p.setGenero( rol )
+        p.setCedula( rol )
+        p.assignService()
+        self.__lista_pacientes.append( p.guardarInfo() )
+        self.__lista_nombre.append( p.getName() )
+        self.__lista_cedula.append( p.getCedula() )
+        self.__lista_genero.append( p.getGenero() )
+        self._diccionario_pacientes.update( {'Nombre' : self.lista_nombre, 'Cedula' : self.lista_cedula, 'Genero' : self._lista_genero} )
+
+        print( self.__lista_pacientes )
+        print( self.numeroDePacientes() )
+
+    def verDatosPacientesLista( self ):
+        cedula = input( 'Ingrese la cedula del paciente que quiere ingresar en la lista: ' )
+        for c in self.__lista_pacientes:
+            if cedula == c[1]:
+                return print(c)
+
+    def verDatosPacientesDiccionario( self ):
+        cedula = input( "Ingresar la cedula del pacientes que busca en el diccionario: " )
+        for p, c in enumerate( self.__diccionario_pacientes ):
