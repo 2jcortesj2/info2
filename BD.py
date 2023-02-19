@@ -93,7 +93,7 @@ class Sistema(Persona):
         print(self.__lista_pacientes)
         print(self.__lista_cedula)
         print(self.__lista_genero)
-        print(self.__diccionario_pacientes)1
+        print(self.__diccionario_pacientes)
         print(self.numeroPacientes())
 
     def verDatosPacientesLista(self):
