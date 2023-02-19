@@ -11,7 +11,7 @@ class Persona:
         self.__cedula = input('Ingrese cedula del ' + rol + ': ')
 
     def asignarGenero(self, rol):
-        self.__genero = input('Ingrese genero del ' + rol + ': ')
+        self.__genero = input('Ingrese género del ' + rol + ': ')
     
     def verNombre(self):
         return self.__nombre
@@ -67,11 +67,11 @@ class Medico(Empleado):
 
 class Sistema(Persona):
     def __init__(self): # No puse doble guion
-        self.__lista_pacientes = []
-        self.__lista_nombre = []
-        self.__lista_cedula = []
-        self.__lista_genero = []
-        self.__diccionario_pacientes = {  }
+        self.__lista_pacientes = [('Juan', '123', 'M'), ('Mauricio', '456', 'M')]
+        self.__lista_nombre = ['Juan', 'Mauricio']
+        self.__lista_cedula = ['123', '456']
+        self.__lista_genero = ['M', 'M']
+        self.__diccionario_pacientes = {'Nombre': ['Juan', 'Mauricio'], 'Cedula': ['123', '123'], 'Genero': ['M', 'M']}
 
     def numeroPacientes(self):
         self.__numero_pacientes = len(self.__lista_pacientes)
@@ -107,9 +107,9 @@ class Sistema(Persona):
         for p, c in enumerate(self.__diccionario_pacientes['Cedula']):
             if cedula == c:
                 print(f'''
-                Nombre: {self._diccionario_pacientes['Nombre'][p]}, 
-                cedula : {self.diccionario_pacientes['Cedula'][p]}, 
-                Genero: {self._diccionario_pacientes['Genero'][p]}''')
+                Nombre:  {self.__diccionario_pacientes['Nombre'][p]} 
+                cedula : {self.__diccionario_pacientes['Cedula'][p]} 
+                Genero:  {self.__diccionario_pacientes['Genero'][p]}''')
 
 
                 
@@ -127,7 +127,7 @@ def main():
         if opcion == 2:
             a.verDatosPacientesDiccionario()
         if opcion == 3:
-            print(a.numeroPacientes())
+            print(f'Número de pacientes registrados: {a.numeroPacientes()}')
         if opcion == 4:
             break
 
