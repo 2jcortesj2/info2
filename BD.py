@@ -1,8 +1,8 @@
 class Persona:
     def __init__(self):
-        self.__nombre = ""
-        self.__cedula = 0
-        self.__genero = ""
+        self.__nombre = ''
+        self.__cedula = ''
+        self.__genero = ''
     
     def asignarNombre(self, rol):
         self.__nombre = input('Ingrese nombre del ' + rol + ': ')
@@ -27,8 +27,7 @@ class Persona:
 
 class Paciente(Persona):
     def __init__(self):
-        super().__init__()
-        self.__servicio = ""
+        self.__servicio = ''
 
     def asignarServicio(self):
         self.__servicio = input('Ingresar servicio: ')
@@ -38,34 +37,36 @@ class Paciente(Persona):
     
 class Empleado(Persona):
     def __init__(self):
-        self.__turno = ""
+        self.__turno = ''
 
     def asignarTurno(self, turno):
         self.__turno = turno
-        
+
     def verTurno(self, turno):
         return self.__turno
 
 class Enfermera(Empleado):
     def __init__(self):
-        self.__rango = ""
+        self.__rango = ''
+
     def asignarRango(self, rango):
         self.__rango = rango
+
     def verRango(self):
         return self.__rango
 
 class Medico(Empleado):
     def __init__(self):
-        self.__especialidad = ""
+        self.__especialidad = ''
+
     def asignarEspecialidad(self, especialidad):
+
         self.__especialidad = especialidad
     def verEspecialidad(self):
         return self.__especialidad
 
 class Sistema(Persona):
-    
-    def _init_(self):
-        Persona.__init__(self)
+    def __init__(self): # No puse doble guion
         self.__lista_pacientes = []
         self.__lista_nombre = []
         self.__lista_cedula = []
@@ -73,7 +74,7 @@ class Sistema(Persona):
         self.__diccionario_pacientes = {  }
 
     def numeroDePacientes(self):
-        self.__numero_pacientes = len( self.__lista_pacientes )
+        self.__numero_pacientes = len(self.__lista_pacientes)
         return self.__numero_pacientes
     
     def ingresarPaciente(self, rol):
@@ -82,26 +83,30 @@ class Sistema(Persona):
         p.asignarGenero(rol)
         p.asignarCedula(rol)
         p.asignarServicio()
-        self.__lista_pacientes.append(self.guardarInfo())
-        self.__lista_nombre.append( p.verNombre() )
-        self.__lista_cedula.append( p.verCedula() )
-        self.__lista_genero.append( p.verGenero() )
-        self._diccionario_pacientes.update( {'Nombre' : self.__lista_nombre, 'Cedula' : self.__lista_cedula, 'Genero' : self.__lista_genero} )
+        self.__lista_pacientes.append(p.guardarInfo())
+        self.__lista_nombre.append(p.verNombre())
+        self.__lista_cedula.append(p.verCedula())
+        self.__lista_genero.append(p.verGenero())
+        self.__diccionario_pacientes.update({'Nombre' : self.__lista_nombre, 
+        'Cedula' : self.__lista_cedula, 'Genero' : self.__lista_genero})
 
-        print( self.__lista_pacientes )
-        print( self.numeroDePacientes() )
+        print(self.__lista_pacientes)
+        print(self.numeroDePacientes())
 
-    def verDatosPacientesLista( self ):
-        cedula = input( 'Ingrese la cedula del paciente que quiere ingresar en la lista: ' )
+    def verDatosPacientesLista(self):
+        cedula = input('Ingrese la cedula del paciente que quiere ingresar en la lista: ')
         for c in self.__lista_pacientes:
             if cedula == c[1]:
                 return print(c)
 
-    def verDatosPacientesDiccionario( self ):
-        cedula = input( "Ingresar la cedula del pacientes que busca en el diccionario: " )
-        for p, c in enumerate( self.__diccionario_pacientes['Cedula'] ):
+    def verDatosPacientesDiccionario(self):
+        cedula = input('Ingresar la cedula del paciente: ')
+        for p, c in enumerate(self.__diccionario_pacientes['Cedula']):
             if cedula == c:
-                print( f"Nombre: {self._diccionario_pacientes['Nombre'][p]}, cedula : {self.diccionario_pacientes['Cedula'][p]}, Genero: {self._diccionario_pacientes['Genero'][p]}" )
+                print(f'''
+                Nombre: {self._diccionario_pacientes['Nombre'][p]}, 
+                cedula : {self.diccionario_pacientes['Cedula'][p]}, 
+                Genero: {self._diccionario_pacientes['Genero'][p]}''')
 
 
                 
