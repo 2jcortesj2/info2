@@ -91,7 +91,10 @@ class Sistema(Persona):
         'Cedula' : self.__lista_cedula, 'Genero' : self.__lista_genero})
 
         print(self.__lista_pacientes)
-        print(self.numeroDePacientes())
+        print(self.__lista_cedula)
+        print(self.__lista_genero)
+        print(self.__diccionario_pacientes)1
+        print(self.numeroPacientes())
 
     def verDatosPacientesLista(self):
         cedula = input('Ingrese la cedula del paciente que quiere ingresar en la lista: ')
@@ -122,9 +125,9 @@ def main():
         if opcion == 1:
             a.ingresarPaciente('Paciente')
         if opcion == 2:
-            a.verDatosPacientesDiccionario('Paciente')
+            a.verDatosPacientesDiccionario()
         if opcion == 3:
-            a.numeroPacientes()
+            print(a.numeroPacientes())
         if opcion == 4:
             break
 
