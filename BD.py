@@ -73,7 +73,7 @@ class Sistema(Persona):
         self.__lista_genero = []
         self.__diccionario_pacientes = {  }
 
-    def numeroDePacientes(self):
+    def numeroPacientes(self):
         self.__numero_pacientes = len(self.__lista_pacientes)
         return self.__numero_pacientes
     
@@ -124,7 +124,7 @@ def main():
         if opcion == 2:
             a.verDatosPacientesDiccionario('Paciente')
         if opcion == 3:
-            a.numeroDePacientes('Paciente')
+            a.numeroPacientes()
         if opcion == 4:
             break
 
