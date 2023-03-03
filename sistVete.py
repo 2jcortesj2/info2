@@ -6,7 +6,7 @@ class Medicamento():
         self.__medicamentos = mydb["medicamentos"]
     
     def verNombre(self):
-        Nombre=list(self.__medicamentos.find())
+        Nombre = list(self.__medicamentos.find())
         return Nombre[-1]['Nombre']
     
     def verDosis(self):
@@ -20,12 +20,88 @@ class Medicamento():
         myquery = {"Nombre": nombre_med}
         newvalues = { "$set": { "Dosis":dosis} }
         self.__medicamentos.update_one(myquery, newvalues)
-        #self.__medicamento = self.__medicamentos.insert_one({'Dosis':dosis})  
- 
+        #self.__medicamento = self.__medicamentos.insert_one({'Dosis':dosis})
+
+class Mascota(Medicamento):
+    def __init__(self,client):
+        mydb = client["sistVete"]
+        self.__mascota = mydb["mascota"]
+    
+    def asignarNombre(self,nombre_masc):
+        x=self.__mascota.insert_one({'Nombre':nombre_masc})  
+    
+    def asignarMedicamento(self,nombre_masc):
+        Nombre = list(self.__medicamentos.find())
+        myquery = {"Nombre": nombre_masc}
+        newvalues = { "$set": { "Medicamento": Medicamento} }
+        self.__medicamentos.update_one(myquery, newvalues)
+
+    def asignarPeso(self,nombre_masc,dosis):
+        myquery = {"Nombre": nombre_masc}
+        newvalues = { "$set": { "Dosis":dosis} }
+        self.__medicamentos.update_one(myquery, newvalues)
+
+    def asignarFechaIngreso(self,nombre_masc,dosis):
+        myquery = {"Nombre": nombre_masc}
+        newvalues = { "$set": { "Dosis":dosis} }
+        self.__medicamentos.update_one(myquery, newvalues)
+
+    def asignarTipo(self,nombre_masc,dosis):
+        myquery = {"Nombre": nombre_masc}
+        newvalues = { "$set": { "Dosis":dosis} }
+        self.__medicamentos.update_one(myquery, newvalues)
+
+    def asignarHistoria(self,nombre_masc,dosis):
+        myquery = {"Nombre": nombre_masc}
+        newvalues = { "$set": { "Dosis":dosis} }
+        self.__medicamentos.update_one(myquery, newvalues)
+    
+    def verNombre(self):
+        Nombre = list(self.__medicamentos.find())
+        return Nombre[-1]['Nombre']
+    
+    def verNombre(self):
+        Nombre = list(self.__medicamentos.find())
+        return Nombre[-1]['Nombre']
+    
+    def verNombre(self):
+        Nombre = list(self.__medicamentos.find())
+        return Nombre[-1]['Nombre']
+    
+    def verNombre(self):
+        Nombre = list(self.__medicamentos.find())
+        return Nombre[-1]['Nombre']
+    
+    def verNombre(self):
+        Nombre = list(self.__medicamentos.find())
+        return Nombre[-1]['Nombre']
+    
+    def verNombre(self):
+        Nombre = list(self.__medicamentos.find())
+        return Nombre[-1]['Nombre']
+
+class Sistema(Mascota):
+    def eliminarMascota():
+        pass
+
+    def vermedicamentos():
+        pass
+
+    def ingresarMascota():
+        pass
+
+    def verfechaIngreso():
+        pass
+
+    def verNumeromascota():
+        pass
+
+    def salir():
+        pass
         
 def main():
 
-    client = pymongo.MongoClient("mongodb+srv://veronicahenaoi:info123@clusterinfo2.8v994es.mongodb.net/?retryWrites=true&w=majority")
+    client = pymongo.MongoClient("mongodb+srv://jjosecortes:jjosecortes@info2.1k5lrgf.mongodb.net/?retryWrites=true&w=majority")
     db = client.test
     nm=int(input("Ingrese la cantidad de medicamento de la mascota: "))
     m=0
