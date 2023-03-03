@@ -13,7 +13,7 @@ class Medicamento():
         Dosis=list(self.__medicamentos.find())
         print('La dosis suministrada es: ' + str(Dosis[-1]['Dosis']))
 
-    def asignarNombre(self,nombre_med):
+    def asignarNombre_med(self,nombre_med):
         x=self.__medicamentos.insert_one({'Nombre':nombre_med})  
     
     def asignarDosis(self,nombre_med,dosis):
@@ -27,34 +27,34 @@ class Mascota(Medicamento):
         mydb = client["sistVete"]
         self.__mascota = mydb["mascota"]
     
-    def asignarNombre(self,nombre_masc):
+    def asignarNombreMasc(self, nombre_masc):
         x=self.__mascota.insert_one({'Nombre':nombre_masc})  
     
-    def asignarMedicamento(self,nombre_masc):
+    def asignarMedicamento(self, nombre_masc, medicamento):
         Nombre = list(self.__medicamentos.find())
         myquery = {"Nombre": nombre_masc}
-        newvalues = { "$set": { "Medicamento": Medicamento} }
+        newvalues = { "$set": { "Medicamento": medicamento} }
         self.__medicamentos.update_one(myquery, newvalues)
 
-    def asignarPeso(self,nombre_masc,dosis):
+    def asignarPeso(self, nombre_masc, peso):
         myquery = {"Nombre": nombre_masc}
-        newvalues = { "$set": { "Dosis":dosis} }
-        self.__medicamentos.update_one(myquery, newvalues)
+        newvalues = { "$set": { "Peso": peso} }
+        self.__mascota.update_one(myquery, newvalues)
 
     def asignarFechaIngreso(self,nombre_masc,dosis):
         myquery = {"Nombre": nombre_masc}
         newvalues = { "$set": { "Dosis":dosis} }
-        self.__medicamentos.update_one(myquery, newvalues)
+        self.__mascota.update_one(myquery, newvalues)
 
     def asignarTipo(self,nombre_masc,dosis):
         myquery = {"Nombre": nombre_masc}
         newvalues = { "$set": { "Dosis":dosis} }
-        self.__medicamentos.update_one(myquery, newvalues)
+        self.__mascota.update_one(myquery, newvalues)
 
-    def asignarHistoria(self,nombre_masc,dosis):
+    def asignarHistoria(self,nombre_masc,dosis): # fecha y medicamento
         myquery = {"Nombre": nombre_masc}
         newvalues = { "$set": { "Dosis":dosis} }
-        self.__medicamentos.update_one(myquery, newvalues)
+        self.__mascota.update_one(myquery, newvalues)
     
     def verNombre(self):
         Nombre = list(self.__medicamentos.find())
