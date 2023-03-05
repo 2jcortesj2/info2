@@ -4,7 +4,7 @@ client = pymongo.MongoClient("mongodb+srv://jjosecortes:jjosecortes@info2.1k5lrg
 db = client.test
 
 # Se crea la base de datos con su nombre
-mydb = client["bbdd"]
+mydb = client["Base"]
 
 # Se crean subconjuntos
 mycol = mydb["clientes"]
@@ -30,3 +30,4 @@ for y in myprov.find():
 myquery = {"nombre": "Juan", "direccion": "c/ Mayor 1"}
 newvalues = {"$set": {"nombre": "Luis"}}
 
+x = mycol.update_one(myquery, newvalues)
