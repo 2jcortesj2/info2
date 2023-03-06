@@ -4,16 +4,13 @@ class Medicamento():
     def __init__(self,client):
         # Creación de la colección principal
         mydb = client["sistVete"] 
-        # __medicamentos será el objeto para trabajar sobre "Medicamentos"
         self.__medicamentos = mydb["medicamentos"] 
 
-    def asignarNombre_med(self,nombre_med):
-        x = self.__medicamentos.insert_one({'Nombre' : nombre_med})  
+    def asignarNombreMed(self,nombre_med):
+        self.__medicamentos.insert_one({'Nombre': nombre_med})  
     
     def asignarDosis(self,nombre_med,dosis):
-
-        self.__medicamentos.update_one({"Nombre": nombre_med}, {"$set": { "Dosis" : dosis}})
-        x = self.__medicamentos.insert_one({'Dosis' : dosis})
+        self.__medicamentos.update_one({"Nombre": nombre_med}, {"$set": { "Dosis": dosis}})
     
     def verNombre(self):
         Nombre = list(self.__medicamentos.find())
@@ -24,18 +21,19 @@ class Medicamento():
         return Dosis[-1]['Dosis']
 
 class Mascota(Medicamento):
-    def __init__(self,client):
-        mydb = client["sistVete"]
+    def __init__(self, client):
+        mydb = client["sistVete"] 
         self.__mascota = mydb["mascota"]
+        self.__medicamentos = mydb["medicamentos"] 
     
     def asignarNombreMasc(self, nombre_masc):
-        x=self.__mascota.insert_one({'Nombre':nombre_masc})  
+        self.__mascota.insert_one({'Nombre':nombre_masc})  
     
-    def asignarMedicamento(self, nombre_masc, medicamento):
-        Nombre = list(self.__medicamentos.find())
+    def asignarMedicamento(self, nombre_masc, nombMed):
+        medicamento = list(self.__medicamentos.find({"Nombre" : nombMed}))
         myquery = {"Nombre": nombre_masc}
-        newvalues = { "$set": { "Medicamento": medicamento} }
-        self.__medicamentos.update_one(myquery, newvalues)
+        print(medicamento[0])
+        self.__mascota.update_one(myquery, {'$set': medicamento[0]})
 
     def asignarPeso(self, nombre_masc, peso):
         myquery = {"Nombre": nombre_masc}
@@ -99,23 +97,36 @@ class Sistema(Mascota):
 
     def salir():
         pass
-        
+
+def ingresoNumerico(msg=''):
+  try:
+    valor_numerico = int(input(msg))
+    return valor_numerico
+  except:
+    print("Por favor ingresar solo números")
+    return ingresoNumerico()
+
+
 def main():
 
     client = pymongo.MongoClient("mongodb+srv://jjosecortes:jjosecortes@info2.1k5lrgf.mongodb.net/?retryWrites=true&w=majority")
     db = client.test
-    nm=int(input("Ingrese la cantidad de medicamento de la mascota: "))
-    m=0
-    while m<nm:
-        nombre_medicamentos = input("Ingrese el nombre: ") 
-        dosis = int(input("Ingrese la dosis: ")) 
-        medicamento = Medicamento(client) 
-        medicamento.asignarNombre(nombre_medicamentos)
-        ultimo_nombre = medicamento.verNombre()
-        print(ultimo_nombre)
-        medicamento.asignarDosis(ultimo_nombre,dosis)
-        print(medicamento.verDosis())
-        m+=1
+    
+    mascota = Mascota(client)
+    mascota.asignarNombreMasc('Rex')
+    mascota.asignarMedicamento('Rex', 'Penicilina')
+    # nm=int(input("Ingrese la cantidad de medicamento de la mascota: "))
+    # m=0
+    # while m<nm:
+    #     nombre_medicamentos = input("Ingrese el nombre: ") 
+    #     dosis = int(input("Ingrese la dosis: ")) 
+    #     medicamento = Medicamento(client) 
+    #     medicamento.asignarNombreMed(nombre_medicamentos)
+    #     ultimo_nombre = medicamento.verNombre()
+    #     print(ultimo_nombre)
+    #     medicamento.asignarDosis(ultimo_nombre,dosis)
+    #     print(medicamento.verDosis())
+    #     m+=1
         
 def main22():
     #creamos el sistema
