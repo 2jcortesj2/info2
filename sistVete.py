@@ -11,14 +11,6 @@ class Medicamento:
     
     def asignarDosis(self,nombre_med, dosis):
         self.__medicamentos.update_one({"Nombre": nombre_med}, {"$set": { "Dosis": dosis}})
-    
-    def verNombre(self):
-        Nombre = list(self.__medicamentos.find())
-        return Nombre[-1]['Nombre']
-    
-    def verDosis(self):
-        Dosis=list(self.__medicamentos.find())
-        return Dosis[-1]['Dosis']
 
 class Mascota:
     def __init__(self, client):
@@ -41,7 +33,7 @@ class Mascota:
 
     def asignarTipo(self, nombre_masc, tipo):
         myquery = {"NombreMascota": nombre_masc}
-        newvalues = { "$set": {"Tipo": tipo} }
+        newvalues = { "$set": {"Tipo": tipo}}
         self.__mascota.update_one(myquery, newvalues)
 
     def asignarMedicamentos(self, nombre_masc, Meddict):
@@ -49,36 +41,13 @@ class Mascota:
         newvalues = {'$set': Meddict}
         self.__mascota.update_one(myquery, newvalues)
 
-    def asignarHistoria(self, nombre_masc, numero_medicamentos):
-        self.asignarFechaIngreso()
-        self.asignarMedicamento()
+    def asignarHistoria(self, nombre_masc, nhc):
+        myquery = {"NombreMascota": nombre_masc}
+        newvalues = {'$set': {"Tipo": nhc}}
+        self.__mascota.update_one(myquery, newvalues)
 
-    def verNombreMasc(self):
-        Nombre = list(self.__mascota.find())
-        return Nombre[-1]['Nombre']
-    
-    def verPeso(self):
-        Nombre = list(self.__medicamentos.find())
-        return Nombre[-1]['Nombre']
-    
-    def verFechaIngreso(self):
-        Nombre = list(self.__medicamentos.find())
-        return Nombre[-1]['Nombre']
-    
-    def verTipo(self):
-        Nombre = list(self.__medicamentos.find())
-        return Nombre[-1]['Nombre']
-    
-    def verMedicamento(self):
-        Nombre = list(self.__medicamentos.find())
-        return Nombre[-1]['Nombre']
-    
-    def verHistoria(self):
-        Nombre = list(self.__medicamentos.find())
-        return Nombre[-1]['Nombre']
 
 class Sistema(Mascota):
-    
     def __init__(self, client):
         mydb = client["sistVete"] 
         self.__mascotas = mydb["mascota"]
@@ -90,13 +59,6 @@ class Sistema(Mascota):
     def verMedicamentos():
         pass
 
-    def ingresarMascotas(self,nhc):
-        Nombre_mascota = input('Ingresa nombre de la mascota: ')
-        self.asignarNombreMasc(Nombre_mascota)
-        self.asignarTipo(Nombre_mascota)
-        self.asignarPeso(Nombre_mascota)
-        self.asignarHistoria(Nombre_mascota, nhc)
-
     def verFechaIngreso(self, nombre_masc):
         pass
 
@@ -106,8 +68,6 @@ class Sistema(Mascota):
     def verificarMascota(self, nhc):
         return list(self.__mascotas.find({'nhc': nhc}))
 
-    def salir():
-        pass
 
 def ingresoNumerico(msg=''):
   try:
@@ -134,8 +94,10 @@ def main():
         if opcion == 0:
             print("Fin del programa ...")
             break
+
         elif opcion == 5:
-            print("El sistema tiene " + str(sistema.verNumeroMascotas()) + " mascotas")
+            print("\nEl sistema tiene " + str(sistema.verNumeroMascotas()) + " mascotas")
+
         elif opcion == 4:
             #1. solicitar numero de historia clinica y ver que no este
             nhc = int(input("Ingrese Numero de Historia Clinica: "))
@@ -148,6 +110,7 @@ def main():
             print("La mascota: " + m.verNombre() + " tiene los sgtes medicamentos:")
             for medicamento in lista_medicamentos:
                 print("Medicamento con nombre: " + medicamento.verNombre() + " dosis " + str(medicamento.verDosis()))
+        
         elif opcion == 3:
             #1. solicitar numero de historia clinica y ver que no este
             nhc = int(input("Ingrese Numero de Historia Clinica: "))
@@ -155,6 +118,7 @@ def main():
                 print("La mascota no esta en el sistema ...")
                 continue
             print(sistema.verFechaIngresoMascota(nhc))
+        
         elif opcion == 2:
             #1. solicitar numero de historia clinica y ver que no este
             nhc = int(input("Ingrese Numero de Historia Clinica: "))
@@ -163,6 +127,7 @@ def main():
                 print("Se elimino exitosamente la mascota del sistema ...")
             else:
                 print("No se elimino la mascota del sistema, posiblemente no exista ...")
+        
         elif opcion == 1:
             #1. debo verificar que haya espacio en el servicio
             if sistema.verNumeroMascotas() >= 10:
@@ -199,6 +164,7 @@ def main():
             #6. Ingresar la mascota al sistema
             # sistema.ingresarMascota(mascota) ###############################
             print("Mascota " + n + " ingresada ...")
+        
         else:
             print("Opcion no valida: ")
 
