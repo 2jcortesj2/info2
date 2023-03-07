@@ -2,7 +2,6 @@ import pymongo
 
 class Medicamento:
     def __init__(self, client):
-        # Creación de la colección principal
         mydb = client["sistVete"] 
         self.__medicamentos = mydb["medicamentos"] 
     
@@ -10,7 +9,14 @@ class Medicamento:
         self.__medicamentos.insert_one({'Nombre': nombre_med})  
     
     def asignarDosis(self,nombre_med, dosis):
-        self.__medicamentos.update_one({"Nombre": nombre_med}, {"$set": { "Dosis": dosis}})
+        myquery = {"Nombre": nombre_med}
+        newvalues = {"$set": { "Dosis": dosis}}
+        self.__medicamentos.update_one(myquery, newvalues)
+    
+    def asignarHistoria(self,nombre_med, nhc):
+        myquery = {"Nombre": nombre_med}
+        newvalues = {"$set": { "Nhc": nhc}}
+        self.__medicamentos.update_one(myquery, newvalues)
 
 class Mascota:
     def __init__(self, client):
@@ -36,60 +42,71 @@ class Mascota:
         newvalues = { "$set": {"Tipo": tipo}}
         self.__mascota.update_one(myquery, newvalues)
 
-    def asignarMedicamentos(self, nombre_masc, Meddict):
-        myquery = {"NombreMascota": nombre_masc}
-        newvalues = {'$set': Meddict}
-        self.__mascota.update_one(myquery, newvalues)
-
     def asignarHistoria(self, nombre_masc, nhc):
         myquery = {"NombreMascota": nombre_masc}
-        newvalues = {'$set': {"Tipo": nhc}}
+        newvalues = {'$set': {"Nhc": nhc}}
         self.__mascota.update_one(myquery, newvalues)
 
 
-class Sistema(Mascota):
+class Sistema:
     def __init__(self, client):
         mydb = client["sistVete"] 
         self.__mascotas = mydb["mascota"]
         self.__medicamentos = mydb["medicamentos"]
     
-    def eliminarMascota():
-        pass
+    def eliminarMascota(self, nhc):
+        self.__medicamentos.delete_one({"Nhc": nhc})
+        self.__mascotas.delete_one({"Nhc": nhc})
 
-    def verMedicamentos():
-        pass
+    def verMedicamentos(self, nhc):
+        medicamentos = list(self.__medicamentos.find({"Nhc": nhc}))
+        for medicamento in medicamentos:
+            print(f""" 
+            Nombre medicamento: {medicamento['Nombre']} 
+            Dosis: {medicamento['Dosis']}""")
 
-    def verFechaIngreso(self, nombre_masc):
-        pass
+    def verFechaIngresoMascota(self, nhc):
+        lista = list(self.__mascotas.find({"Nhc": nhc}))
+        return lista[-1]["Fechaingreso"]
+    
+    def verNombreMascota(self, nhc):
+        lista = list(self.__mascotas.find({"Nhc": nhc}))
+        return lista[-1]["NombreMascota"]
 
     def verNumeroMascotas(self):
         return len(list(self.__mascotas.find()))
     
     def verificarMascota(self, nhc):
-        return list(self.__mascotas.find({'nhc': nhc}))
+        lista = list(self.__mascotas.find({'Nhc': nhc}))
+        try:
+            lista[-1]
+            return True
+        except IndexError:
+            return False
 
 
 def ingresoNumerico(msg=''):
   try:
     valor_numerico = int(input(msg))
     return valor_numerico
-  except:
+  except ValueError:
     print("Por favor ingresar solo números.")
     return ingresoNumerico(msg)
 
 def main():
     client = pymongo.MongoClient("mongodb+srv://jjosecortes:jjosecortes@info2.1k5lrgf.mongodb.net/?retryWrites=true&w=majority")
     db = client.test
-    #creamos el sistema
+    # Creamos el sistema
     sistema = Sistema(client)
     while True:
-        opcion = ingresoNumerico("""Ingrese: 
-        0-Salir
-        1-Ingresar mascota
-        2-Eliminar
-        3-Ver Fecha Ingreso
-        4-Ver lista medicamentos
-        5-Ver numero de mascotas
+        opcion = ingresoNumerico("""
+        Ingrese: 
+        0 - Salir
+        1 - Ingresar mascota
+        2 - Eliminar
+        3 - Ver Fecha Ingreso
+        4 - Ver lista medicamentos
+        5 - Ver numero de mascotas
         >> """)
         if opcion == 0:
             print("Fin del programa ...")
@@ -99,74 +116,72 @@ def main():
             print("\nEl sistema tiene " + str(sistema.verNumeroMascotas()) + " mascotas")
 
         elif opcion == 4:
-            #1. solicitar numero de historia clinica y ver que no este
-            nhc = int(input("Ingrese Numero de Historia Clinica: "))
+            # 1. solicitar numero de historia clinica y ver que no este
+            nhc = ingresoNumerico("Ingrese Numero de Historia Clinica: ")
             if sistema.verificarMascota(nhc) == False:
                 print("La mascota no esta en el sistema ...")
                 continue
-            #recupero la mascota de la base de datos
-            m = sistema.recuperarMascota(nhc)
-            lista_medicamentos = m.verMedicamentos()
-            print("La mascota: " + m.verNombre() + " tiene los sgtes medicamentos:")
-            for medicamento in lista_medicamentos:
-                print("Medicamento con nombre: " + medicamento.verNombre() + " dosis " + str(medicamento.verDosis()))
+            # Recupero la mascota de la base de datos
+            print("La mascota " + sistema.verNombreMascota(nhc) + " tiene los sgtes medicamentos:")
+            sistema.verMedicamentos(nhc)
         
         elif opcion == 3:
-            #1. solicitar numero de historia clinica y ver que no este
-            nhc = int(input("Ingrese Numero de Historia Clinica: "))
+            # 1. solicitar numero de historia clinica y ver que no este
+            nhc = ingresoNumerico("Ingrese Numero de Historia Clinica: ")
             if sistema.verificarMascota(nhc) == False:
                 print("La mascota no esta en el sistema ...")
                 continue
-            print(sistema.verFechaIngresoMascota(nhc))
+            print(f'La mascota {sistema.verNombreMascota(nhc)} fue ingresada el:',
+                  sistema.verFechaIngresoMascota(nhc))
         
         elif opcion == 2:
-            #1. solicitar numero de historia clinica y ver que no este
-            nhc = int(input("Ingrese Numero de Historia Clinica: "))
-            resultado = sistema.eliminarMascota(nhc)
-            if resultado == True:
+            # 1. solicitar numero de historia clinica y ver que no este
+            nhc = ingresoNumerico("Ingrese Numero de Historia Clinica: ")
+            if sistema.verificarMascota(nhc) == True:
+                sistema.eliminarMascota(nhc)
                 print("Se elimino exitosamente la mascota del sistema ...")
+            
             else:
                 print("No se elimino la mascota del sistema, posiblemente no exista ...")
         
         elif opcion == 1:
-            #1. debo verificar que haya espacio en el servicio
+            # 1. debo verificar que haya espacio en el servicio
             if sistema.verNumeroMascotas() >= 10:
                 print("No hay espacio ...")
                 continue
-            #2. solicitar numero de historia clinica y ver que no este
+            # 2. solicitar numero de historia clinica y ver que no este
             nhc = ingresoNumerico("Ingrese Numero de Historia Clinica: ")
+            
             if sistema.verificarMascota(nhc) == True:
                 print("La mascota ya esta en el sistema ...")
                 continue
-            #3. Si la historia no esta pido los datos restantes
+            # 3. Si la historia no esta pido los datos restantes
             n = input("Ingrese el nombre de la mascota: ")
             t = input("Ingrese CANINO o FELINO (C/F): ")
             p = ingresoNumerico("Ingrese el pesos de la mascota en kilogramos: ")
             f = input("Ingrese la fecha dd/mm/aaaa : ")
             nm = int(input("Ingrese el número de medicamentos: "))
             lista_medicamentos = {}
-            #4. por cada medicamento solicito los datos
+            # 4. por cada medicamento solicito los datos
             for i in range(0,nm):
                 nombre_medicamentos = input("\nIngrese el nombre: ")
                 dosis = ingresoNumerico("Ingrese la dosis: ")
                 medicamento = Medicamento(client)
                 medicamento.asignarNombreMed(nombre_medicamentos)
                 medicamento.asignarDosis(nombre_medicamentos, dosis)
-                lista_medicamentos[nombre_medicamentos] = (dosis)
-            #5. crear la mascota y asignarle la informacion
+                medicamento.asignarHistoria(nombre_medicamentos, nhc)
+            # 5. crear la mascota e ingresar la informacion
             mascota = Mascota(client)
             mascota.asignarNombreMasc(n)
-            # mascota.asignarHistoria(n, nhc)
+            mascota.asignarHistoria(n, nhc)
             mascota.asignarTipo(n, t)
             mascota.asignarPeso(n, p)
             mascota.asignarFechaIngreso(n, f)
-            mascota.asignarMedicamentos(n, lista_medicamentos)
-            #6. Ingresar la mascota al sistema
-            # sistema.ingresarMascota(mascota) ###############################
-            print("Mascota " + n + " ingresada ...")
+
+            print("\nMascota " + n + " ingresada ...")
         
         else:
-            print("Opcion no valida: ")
+            print("Opción no válida: ")
 
 if __name__ == '__main__':
     main()
