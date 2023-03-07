@@ -2,8 +2,11 @@ import pymongo
 
 class Medicamento:
     def __init__(self, client):
+        # Creación del cliente y la colección
         mydb = client["sistVete"] 
         self.__medicamentos = mydb["medicamentos"] 
+    
+    ### Métodos de asignación ###
     
     def asignarNombreMed(self, nombre_med):
         self.__medicamentos.insert_one({'Nombre': nombre_med})  
@@ -20,10 +23,13 @@ class Medicamento:
 
 class Mascota:
     def __init__(self, client):
+        # Creación del cliente y la colección
         mydb = client["sistVete"] 
         self.__mascota = mydb["mascota"]
         self.__medicamentos = mydb["medicamentos"] 
     
+    ### Métodos de asignación ###
+
     def asignarNombreMasc(self, nombre_masc):
         self.__mascota.insert_one({'NombreMascota':nombre_masc})  
 
@@ -50,6 +56,7 @@ class Mascota:
 
 class Sistema:
     def __init__(self, client):
+        # Creación del cliente y la colección
         mydb = client["sistVete"] 
         self.__mascotas = mydb["mascota"]
         self.__medicamentos = mydb["medicamentos"]
@@ -58,6 +65,8 @@ class Sistema:
         self.__medicamentos.delete_one({"Nhc": nhc})
         self.__mascotas.delete_one({"Nhc": nhc})
 
+    ### Métodos "ver" generan por return, exxcepto verMedicamentos que devuelve un print ###
+    
     def verMedicamentos(self, nhc):
         medicamentos = list(self.__medicamentos.find({"Nhc": nhc}))
         for medicamento in medicamentos:
@@ -77,6 +86,7 @@ class Sistema:
         return len(list(self.__mascotas.find()))
     
     def verificarMascota(self, nhc):
+        # True si existe, False si no
         lista = list(self.__mascotas.find({'Nhc': nhc}))
         try:
             lista[-1]
