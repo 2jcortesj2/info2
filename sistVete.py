@@ -1,15 +1,15 @@
 import pymongo
 
-class Medicamento():
-    def __init__(self,client):
+class Medicamento:
+    def __init__(self, client):
         # Creación de la colección principal
         mydb = client["sistVete"] 
         self.__medicamentos = mydb["medicamentos"] 
-
-    def asignarNombreMed(self,nombre_med):
+    
+    def asignarNombreMed(self, nombre_med):
         self.__medicamentos.insert_one({'Nombre': nombre_med})  
     
-    def asignarDosis(self,nombre_med,dosis):
+    def asignarDosis(self,nombre_med, dosis):
         self.__medicamentos.update_one({"Nombre": nombre_med}, {"$set": { "Dosis": dosis}})
     
     def verNombre(self):
@@ -20,80 +20,91 @@ class Medicamento():
         Dosis=list(self.__medicamentos.find())
         return Dosis[-1]['Dosis']
 
-class Mascota(Medicamento):
+class Mascota:
     def __init__(self, client):
         mydb = client["sistVete"] 
         self.__mascota = mydb["mascota"]
         self.__medicamentos = mydb["medicamentos"] 
     
     def asignarNombreMasc(self, nombre_masc):
-        self.__mascota.insert_one({'Nombre':nombre_masc})  
-    
-    def asignarMedicamento(self, nombre_masc, nombMed):
-        medicamento = list(self.__medicamentos.find({"Nombre" : nombMed}))
-        myquery = {"Nombre": nombre_masc}
-        print(medicamento[0])
-        self.__mascota.update_one(myquery, {'$set': medicamento[0]})
+        self.__mascota.insert_one({'NombreMascota':nombre_masc})  
 
     def asignarPeso(self, nombre_masc, peso):
-        myquery = {"Nombre": nombre_masc}
-        newvalues = { "$set": { "Peso": peso} }
+        myquery = {"NombreMascota": nombre_masc}
+        newvalues = {"$set": { "Peso": peso}}
         self.__mascota.update_one(myquery, newvalues)
 
-    def asignarFechaIngreso(self,nombre_masc,dosis):
-        myquery = {"Nombre": nombre_masc}
-        newvalues = { "$set": { "Dosis":dosis} }
+    def asignarFechaIngreso(self, nombre_masc, fecha):
+        myquery = {"NombreMascota": nombre_masc}
+        newvalues = {"$set": {"Fechaingreso": fecha}}
         self.__mascota.update_one(myquery, newvalues)
 
-    def asignarTipo(self,nombre_masc,dosis):
-        myquery = {"Nombre": nombre_masc}
-        newvalues = { "$set": { "Dosis":dosis} }
+    def asignarTipo(self, nombre_masc, tipo):
+        myquery = {"NombreMascota": nombre_masc}
+        newvalues = { "$set": {"Tipo": tipo} }
         self.__mascota.update_one(myquery, newvalues)
 
-    def asignarHistoria(self,nombre_masc,dosis): # fecha y medicamento
-        myquery = {"Nombre": nombre_masc}
-        newvalues = { "$set": { "Dosis":dosis} }
+    def asignarMedicamentos(self, nombre_masc, Meddict):
+        myquery = {"NombreMascota": nombre_masc}
+        newvalues = {'$set': Meddict}
         self.__mascota.update_one(myquery, newvalues)
+
+    def asignarHistoria(self, nombre_masc, numero_medicamentos):
+        self.asignarFechaIngreso()
+        self.asignarMedicamento()
+
+    def verNombreMasc(self):
+        Nombre = list(self.__mascota.find())
+        return Nombre[-1]['Nombre']
     
-    def verNombre(self):
+    def verPeso(self):
         Nombre = list(self.__medicamentos.find())
         return Nombre[-1]['Nombre']
     
-    def verNombre(self):
+    def verFechaIngreso(self):
         Nombre = list(self.__medicamentos.find())
         return Nombre[-1]['Nombre']
     
-    def verNombre(self):
+    def verTipo(self):
         Nombre = list(self.__medicamentos.find())
         return Nombre[-1]['Nombre']
     
-    def verNombre(self):
+    def verMedicamento(self):
         Nombre = list(self.__medicamentos.find())
         return Nombre[-1]['Nombre']
     
-    def verNombre(self):
-        Nombre = list(self.__medicamentos.find())
-        return Nombre[-1]['Nombre']
-    
-    def verNombre(self):
+    def verHistoria(self):
         Nombre = list(self.__medicamentos.find())
         return Nombre[-1]['Nombre']
 
 class Sistema(Mascota):
+    
+    def __init__(self, client):
+        mydb = client["sistVete"] 
+        self.__mascotas = mydb["mascota"]
+        self.__medicamentos = mydb["medicamentos"]
+    
     def eliminarMascota():
         pass
 
-    def vermedicamentos():
+    def verMedicamentos():
         pass
 
-    def ingresarMascota():
+    def ingresarMascotas(self,nhc):
+        Nombre_mascota = input('Ingresa nombre de la mascota: ')
+        self.asignarNombreMasc(Nombre_mascota)
+        self.asignarTipo(Nombre_mascota)
+        self.asignarPeso(Nombre_mascota)
+        self.asignarHistoria(Nombre_mascota, nhc)
+
+    def verFechaIngreso(self, nombre_masc):
         pass
 
-    def verfechaIngreso():
-        pass
-
-    def verNumeromascota():
-        pass
+    def verNumeroMascotas(self):
+        return len(list(self.__mascotas.find()))
+    
+    def verificarMascota(self, nhc):
+        return list(self.__mascotas.find({'nhc': nhc}))
 
     def salir():
         pass
@@ -103,36 +114,23 @@ def ingresoNumerico(msg=''):
     valor_numerico = int(input(msg))
     return valor_numerico
   except:
-    print("Por favor ingresar solo números")
-    return ingresoNumerico()
-
+    print("Por favor ingresar solo números.")
+    return ingresoNumerico(msg)
 
 def main():
-
     client = pymongo.MongoClient("mongodb+srv://jjosecortes:jjosecortes@info2.1k5lrgf.mongodb.net/?retryWrites=true&w=majority")
     db = client.test
-    
-    mascota = Mascota(client)
-    mascota.asignarNombreMasc('Rex')
-    mascota.asignarMedicamento('Rex', 'Penicilina')
-    # nm=int(input("Ingrese la cantidad de medicamento de la mascota: "))
-    # m=0
-    # while m<nm:
-    #     nombre_medicamentos = input("Ingrese el nombre: ") 
-    #     dosis = int(input("Ingrese la dosis: ")) 
-    #     medicamento = Medicamento(client) 
-    #     medicamento.asignarNombreMed(nombre_medicamentos)
-    #     ultimo_nombre = medicamento.verNombre()
-    #     print(ultimo_nombre)
-    #     medicamento.asignarDosis(ultimo_nombre,dosis)
-    #     print(medicamento.verDosis())
-    #     m+=1
-        
-def main22():
     #creamos el sistema
-    sistema = Sistema()
+    sistema = Sistema(client)
     while True:
-        opcion = ingresoNumerico("Ingrese 0 para salir, 1 para ingresar mascota, 2 para eliminar, 3 ver Fecha Ingreso, 4 ver lista medicamentos, 5 ver numero de mascotas ")
+        opcion = ingresoNumerico("""Ingrese: 
+        0-Salir
+        1-Ingresar mascota
+        2-Eliminar
+        3-Ver Fecha Ingreso
+        4-Ver lista medicamentos
+        5-Ver numero de mascotas
+        >> """)
         if opcion == 0:
             print("Fin del programa ...")
             break
@@ -177,29 +175,29 @@ def main22():
                 continue
             #3. Si la historia no esta pido los datos restantes
             n = input("Ingrese el nombre de la mascota: ")
-            t = input("Ingrese CANINO o FELINO: ")
-            p = ingresoNumerico("Ingrese el pesos de la mascota en kilogramos")
+            t = input("Ingrese CANINO o FELINO (C/F): ")
+            p = ingresoNumerico("Ingrese el pesos de la mascota en kilogramos: ")
             f = input("Ingrese la fecha dd/mm/aaaa : ")
-            nm = int(input("Ingrese el numero de medicamentos: "))
-            lista_medicamentos = []
+            nm = int(input("Ingrese el número de medicamentos: "))
+            lista_medicamentos = {}
             #4. por cada medicamento solicito los datos
             for i in range(0,nm):
-                nombre_medicamentos = input("Ingrese el nombre: ")
+                nombre_medicamentos = input("\nIngrese el nombre: ")
                 dosis = ingresoNumerico("Ingrese la dosis: ")
-                medicamento = Medicamento()
-                medicamento.asignarDosis(dosis)
-                medicamento.asignarNombre(nombre_medicamentos)
-                lista_medicamentos.append(medicamento)
+                medicamento = Medicamento(client)
+                medicamento.asignarNombreMed(nombre_medicamentos)
+                medicamento.asignarDosis(nombre_medicamentos, dosis)
+                lista_medicamentos[nombre_medicamentos] = (dosis)
             #5. crear la mascota y asignarle la informacion
-            mascota = Mascota()
-            mascota.asignarHistoria(nhc)
-            mascota.asignarNombre(n)
-            mascota.asignarTipo(t)
-            mascota.asignarPeso(p)
-            mascota.asignarFechaIngreso(f)
-            mascota.asignarMedicamentos(lista_medicamentos)
+            mascota = Mascota(client)
+            mascota.asignarNombreMasc(n)
+            # mascota.asignarHistoria(n, nhc)
+            mascota.asignarTipo(n, t)
+            mascota.asignarPeso(n, p)
+            mascota.asignarFechaIngreso(n, f)
+            mascota.asignarMedicamentos(n, lista_medicamentos)
             #6. Ingresar la mascota al sistema
-            sistema.ingresarMascota(mascota)
+            # sistema.ingresarMascota(mascota) ###############################
             print("Mascota " + n + " ingresada ...")
         else:
             print("Opcion no valida: ")
