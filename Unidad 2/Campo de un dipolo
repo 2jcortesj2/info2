@@ -1,14 +1,12 @@
-# # Se importan los módulos necesarios para la graficación
+# Se importan los módulos necesarios para la graficación
 
 import numpy as np
-
 import matplotlib.pyplot as plt
-
 from matplotlib.patches import Circle
 
 
 
-# # Función que retorna el campo Eléctrico.
+# Función que retorna el campo Eléctrico.
 
 def E(q, r0, x, y):
 
@@ -20,7 +18,7 @@ def E(q, r0, x, y):
 
 
 
-# # puntos de los ejes x e y.
+# Puntos de los ejes x e y.
 
 nx, ny = 64, 64
 
@@ -32,7 +30,7 @@ X, Y = np.meshgrid(x, y)
 
 
 
-# # Crear un multipolo con nq cargas
+# Crear un multipolo con nq cargas
 
 # count = número de q. En ese caso es 1 dipolo
 
@@ -50,7 +48,7 @@ for i in range(nq):
 
 
 
-# # Vector de campo eléctrico como componentes separados (Ex,Ey)
+# Vector de campo eléctrico como componentes separados (Ex,Ey)
 
 Ex, Ey = np.zeros((ny, nx)), np.zeros((ny, nx))
 
@@ -70,9 +68,7 @@ ax = fig.add_subplot(111)
 
 
 
-
-
-# # Dibujar las líneas de flujo con mapa de colores y estilos apropiados.
+# Dibujar las líneas de flujo con mapa de colores y estilos apropiados.
 
 color = 2 * np.log(np.hypot(Ex, Ey))
 
@@ -82,9 +78,7 @@ ax.streamplot(x, y, Ex, Ey, color=color, linewidth=1, cmap=plt.cm.inferno,
 
 
 
-
-
-# # Agregar circulos para las cargas.
+# Agregar circulos para las cargas.
 
 charge_colors = {True: '#aa0000', False: '#0000aa'}
 
@@ -94,9 +88,7 @@ for q, pos in charges:
 
 
 
-
-
-# # Graficar
+# Graficar
 
 ax.set_xlabel('$x$')
 
