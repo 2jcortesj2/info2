@@ -7,16 +7,14 @@ def E(q, r0, x, y):
     den = np.hypot(x-r0[0], y-r0[1])**3
     return q * (x - r0[0]) / den, q * (y - r0[1]) / den
 
-
-nx, ny = 64, 64
-
+nx = 64
+ny = 64
 x = np.linspace(-2, 2, nx)
 y = np.linspace(-2, 2, ny)
 X, Y = np.meshgrid(x, y)
 
 
 count = 1
-
 nq = 2**int(count)
 
 charges = []
@@ -55,4 +53,3 @@ ax.set_ylim(-2,2)
 ax.set_aspect('equal')
 
 plt.show()
-
