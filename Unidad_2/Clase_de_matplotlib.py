@@ -6,4 +6,4 @@ y = np.sin(x)
 
 fig, ax = plt.subplots()
 ax.plot(x, y)
-plt.show 
+plt.show
