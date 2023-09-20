@@ -5,17 +5,17 @@ from sklearn.linear_model import LinearRegression
 
 # Cargamos los datos 
 
-datos = pd.read_excel(r"C:\Users\juanf\Downloads\Datos taller Al.xlsx")
+datos = pd.read_csv("Acero bajo carbono.txt", delimiter="\t").astype(float)
 
-datos['Fuerza (kN)'] = (datos['Fuerza (kN)'] / 0.0000402) * 0.001
-datos['Cambio en la Long. (mm)'] = datos['Cambio en la Long. (mm)'] / 50
+datos['Fuerza'] = (datos['Fuerza'] / 0.0000149) * 1e-6
+datos['Desplazamiento'] = datos['Desplazamiento'] / 50
 
 # Escogemos un intervalo para hallar la pendiente
-condicion = datos['Cambio en la Long. (mm)'] <= 0.0342
+condicion = datos['Desplazamiento'] <= 0.092
 datos_seleccionados = datos[condicion]
 
-X = datos_seleccionados['Cambio en la Long. (mm)'].values.reshape(-1, 1)  # Variables independientes
-y = datos_seleccionados['Fuerza (kN)'].values  # Variable dependiente
+X = datos_seleccionados['Desplazamiento'].values.reshape(-1, 1)  # Variables independientes
+y = datos_seleccionados['Fuerza'].values  # Variable dependiente
 
 # Crea un modelo de regresión lineal
 model = LinearRegression()
@@ -30,7 +30,7 @@ modulo_young = model.coef_[0]
 
 fig, ax = plt.subplots()
 
-datos.plot(y='Fuerza (kN)', x='Cambio en la Long. (mm)', ax=ax)
+datos.plot(y='Fuerza', x='Desplazamiento', ax=ax)
 
 plt.xlabel('Deformación unitaria', fontfamily = "times new roman")
 plt.ylabel('Esfuerzo (MPa)', fontfamily = "times new roman")
@@ -40,7 +40,7 @@ plt.text(0.015, 50, 'Módulo de Young = {:.2f} MPa'.format(modulo_young),
          fontfamily = "times new roman")
 
 # Linea para hallar el límite de elasticidad y resilencia
-x = np.arange(0, 0.05, 0.05/601)
+x = np.arange(0, 0.15, 0.15/7508)
 y = modulo_young*(x - 0.002)
 linea = pd.DataFrame()
 linea['X'] = x
@@ -50,12 +50,12 @@ plt.plot(x, y, '--', c='gray')
 
 # Código para encontrar el punto de intersección
 
-# Escogemos un intervalo para hallar la pendiente
-condicion = datos['Cambio en la Long. (mm)'] <= 0.05
+# Escogemos un intervalo para hallar la resilencia
+condicion = datos['Desplazamiento'] <= 0.15
 datos_seleccionados = datos[condicion]
 
 # Cambio de nombres para que las columnas queden etiquetadas igual
-datos_seleccionados = datos_seleccionados.rename(columns={'Fuerza (kN)': 'Y'})
+datos_seleccionados = datos_seleccionados.rename(columns={'Fuerza': 'Y'})
 
 # Calcula la diferencia absoluta entre los valores de las dos columnas en cada fila
 diff = datos_seleccionados.sub(linea).abs()
@@ -64,40 +64,54 @@ diff = datos_seleccionados.sub(linea).abs()
 fila_mas_cercana = diff['Y'].idxmin()
 
 # Grafica del segundo punto mas cercano
-coord_x = datos_seleccionados.loc[fila_mas_cercana, 'Cambio en la Long. (mm)']
+coord_x = datos_seleccionados.loc[fila_mas_cercana, 'Desplazamiento']
 coord_y = datos_seleccionados.loc[fila_mas_cercana, 'Y']
 
 ax.scatter(coord_x, coord_y, c='red', zorder=5)
 
-plt.text(coord_x + 0.002, coord_y - 12, 'Límite de elasticidad = ({:.2f}, {:.2f})'.format(coord_x, coord_y), 
+plt.text(coord_x + 0.002, coord_y - 240, 'Límite de elasticidad = {:.2f} MPa'.format(coord_y), 
          fontfamily = "times new roman")
 
 # Area bajo la curva
 # Escogemos un intervalo con el límite de elasticidad
 
-condicion = datos['Cambio en la Long. (mm)'] <= coord_x
+condicion = datos['Desplazamiento'] <= coord_x
 datos_seleccionados = datos[condicion]
-plt.fill_between(datos_seleccionados['Cambio en la Long. (mm)'], 
-                 datos_seleccionados['Fuerza (kN)'], color='aquamarine')
+plt.fill_between(datos_seleccionados['Desplazamiento'], 
+                 datos_seleccionados['Fuerza'], color='aquamarine')
 
-area = np.trapz(datos_seleccionados['Cambio en la Long. (mm)'], 
-                datos_seleccionados['Fuerza (kN)'])
+print(coord_x * coord_y / 2)
 
-plt.text(0.015, 36, 'Resilencia = {:.2f} MJ / m{}'.format(area, chr(0xB0 + 3)), 
+area = np.trapz(datos_seleccionados['Desplazamiento'], 
+                datos_seleccionados['Fuerza'])
+
+plt.text(0.015, 300, 'Resilencia = {:.2f} MJ / m{}'.format(area, chr(0xB0 + 3)), 
          fontfamily = "times new roman")
 
 # Límite de ruptura
-ax.scatter(datos.tail(1)["Cambio en la Long. (mm)"], datos.tail(1)["Fuerza (kN)"], c='red', zorder=5)
+coord_x = datos.tail(1)["Desplazamiento"]
+coord_y = datos.tail(1)["Fuerza"]
+
+ax.scatter(coord_x, coord_y, c='red', zorder=5)
+
+plt.text(coord_x - 0.235, coord_y - 300, 'Límite de ruptura = {:.2f} MPa'.format(coord_y.values[0]), 
+         fontfamily = "times new roman")
 
 # Resistencia a la tracción
-id_resistencia = datos["Fuerza (kN)"].idxmax()
-punto_resistencia = datos.iloc(id_resistencia)
-print(punto_resistencia)
-ax.scatter(datos.tail(1)["Cambio en la Long. (mm)"], datos.tail(1)["Fuerza (kN)"], c='red', zorder=5)
+id_resistencia = datos["Fuerza"].idxmax()
+punto_resistencia = datos.loc[id_resistencia]
+
+coord_x = punto_resistencia.iloc[2]
+coord_y = punto_resistencia.iloc[1]
+
+ax.scatter(coord_x, coord_y, c='red', zorder=5)
+
+plt.text(coord_x - 0.15, coord_y + 100, 'Resistencia a la tracción = {:.2f} MPa'.format(punto_resistencia.iloc[1]), 
+         fontfamily = "times new roman")
 
 # Guardar la imagen
 plt.savefig("Grafica2.jpg", dpi=1200)
 
 # Configuraciones de la graficacion
-plt.xticks(np.arange(0.002, 0.200, step=0.01), rotation=45)
+plt.title('Ensayo de tracción', fontfamily = "times new roman")
 plt.show()
