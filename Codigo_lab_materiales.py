@@ -7,7 +7,7 @@ from sklearn.linear_model import LinearRegression
 
 datos = pd.read_csv("Acero bajo carbono.txt", delimiter="\t").astype(float)
 
-datos['Fuerza'] = (datos['Fuerza'] / 0.0000149) * 1e-6
+datos['Fuerza'] = (datos['Fuerza'] / 0.0001377935) * 1e-6
 datos['Desplazamiento'] = datos['Desplazamiento'] / 50
 
 # Escogemos un intervalo para hallar la pendiente
@@ -36,7 +36,9 @@ plt.xlabel('Deformación unitaria', fontfamily = "times new roman")
 plt.ylabel('Esfuerzo (MPa)', fontfamily = "times new roman")
 ax.get_legend().remove()
 
-plt.text(0.015, 50, 'Módulo de Young = {:.2f} MPa'.format(modulo_young), 
+plt.text(datos['Desplazamiento'].max() * 0.03,
+         datos['Fuerza'].max() * 0.1,
+         'Módulo de Young = {:.2f} MPa'.format(modulo_young), 
          fontfamily = "times new roman")
 
 # Linea para hallar el límite de elasticidad y resilencia
@@ -69,7 +71,7 @@ coord_y = datos_seleccionados.loc[fila_mas_cercana, 'Y']
 
 ax.scatter(coord_x, coord_y, c='red', zorder=5)
 
-plt.text(coord_x + 0.002, coord_y - 240, 'Límite de elasticidad = {:.2f} MPa'.format(coord_y), 
+plt.text(coord_x * 1.04, coord_y * 0.93, 'Límite de elasticidad = {:.2f} MPa'.format(coord_y), 
          fontfamily = "times new roman")
 
 # Area bajo la curva
@@ -85,7 +87,9 @@ print(coord_x * coord_y / 2)
 area = np.trapz(datos_seleccionados['Desplazamiento'], 
                 datos_seleccionados['Fuerza'])
 
-plt.text(0.015, 300, 'Resilencia = {:.2f} MJ / m{}'.format(area, chr(0xB0 + 3)), 
+plt.text(datos['Desplazamiento'].max() * 0.03, 
+         datos['Fuerza'].max() * 0.16, 
+         'Resilencia = {:.2f} MJ / m{}'.format(area, chr(0xB0 + 3)), 
          fontfamily = "times new roman")
 
 # Límite de ruptura
@@ -94,7 +98,7 @@ coord_y = datos.tail(1)["Fuerza"]
 
 ax.scatter(coord_x, coord_y, c='red', zorder=5)
 
-plt.text(coord_x - 0.235, coord_y - 300, 'Límite de ruptura = {:.2f} MPa'.format(coord_y.values[0]), 
+plt.text(coord_x * 0.6, coord_y * 0.9, 'Límite de ruptura = {:.2f} MPa'.format(coord_y.values[0]), 
          fontfamily = "times new roman")
 
 # Resistencia a la tracción
@@ -106,12 +110,12 @@ coord_y = punto_resistencia.iloc[1]
 
 ax.scatter(coord_x, coord_y, c='red', zorder=5)
 
-plt.text(coord_x - 0.15, coord_y + 100, 'Resistencia a la tracción = {:.2f} MPa'.format(punto_resistencia.iloc[1]), 
+plt.text(coord_x * 0.66, coord_y * 1.03, 'Resistencia a la tracción = {:.2f} MPa'.format(punto_resistencia.iloc[1]), 
          fontfamily = "times new roman")
 
 # Guardar la imagen
 plt.savefig("Grafica2.jpg", dpi=1200)
 
 # Configuraciones de la graficacion
-plt.title('Ensayo de tracción', fontfamily = "times new roman")
+plt.title('Ensayo de tracción para el acero bajo carbono', fontfamily = "times new roman")
 plt.show()
